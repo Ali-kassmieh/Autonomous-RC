@@ -10,3 +10,13 @@
 ## Goals:
   - Look into the posibility of PWN integration
   - Look into how to connect a microcontroller to a relay
+
+# May 31, 2026
+## Objective
+- Figure out how to replace relay with microcontroller
+- Funding
+## Notes
+- My previous thought that ESC work on PWM was correct and therefore rather than interfacing a microcontroller with the relay I will replace the relay
+- I have also realized that there is one constant in life: money. I am without funding except for my part time job at Subway, which as you can imagine is not a lot of money
+  - I can try to sell some old workout things I have lying around, though its only a bench and adjustable dumbbells
+  - I could get another job but given I leave to college in 3 months I doubt I would get hired
