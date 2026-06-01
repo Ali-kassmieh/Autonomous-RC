@@ -16,7 +16,15 @@
 - Figure out how to replace relay with microcontroller
 - Funding
 ## Notes
+### Microcontroller
 - My previous thought that ESC work on PWM was correct and therefore rather than interfacing a microcontroller with the relay I will replace the relay
+- I will use an ESP 32 for this project as it already has wifi capabilities that will make relaying much easier
+- **New Research:** turns out I was thinking incorrectly. The ESC has a BEC which powers the receiver, not the relay. However, if i remove the receiver and connect the ESC's GND and Control wire to the ESP's GND and GPIO wire then seperatly power the ESP, it will work.
+### Funding
 - I have also realized that there is one constant in life: money. I am without funding except for my part time job at Subway, which as you can imagine is not a lot of money
   - I can try to sell some old workout things I have lying around, though its only a bench and adjustable dumbbells
   - I could get another job but given I leave to college in 3 months I doubt I would get hired
+## Takeaways
+- Replace receiver by connecting ESP to ESC's control and GND pin
+## Future research
+- How do I code this
