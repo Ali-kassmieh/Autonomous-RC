@@ -28,3 +28,73 @@
 - Replace receiver by connecting ESP to ESC's control and GND pin
 ## Future research
 - How do I code this
+
+# June 3, 2026
+## Objective
+- Figure out the correct Pulse Widths for forward and backward
+- If time allows, get the servo working
+## Notes
+- I got the funding and am awaiting my ESP 32, but for now ill use my arduino for basic code
+- I got the arduino to connect to the ESC and I got the motor running for a predetermined amount of time
+- Movements work via microseconds, and I have found that 1500 microseconds coresponds to neutral
+
+  ### Issue: I cannot seem to get the motor to move backwards
+- **debug try 1** Try a bunch of values until it moves
+ ```cpp
+#include <Servo.h>
+Servo esc;
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(115200);
+  esc.attach(13);
+  esc.writeMicroseconds(1500);
+  delay(3000);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  int testTime = 3000;
+  Serial.println("began testing");
+   for (int i = 0; i < 10; i++){
+     int testSpeed = 1000 + (100*i);
+     Serial.println(testSpeed);
+     esc.writeMicroseconds(testSpeed);
+     delay(testTime);
+   } 
+}
+```
+- **Findings** The first test works very well, proving that 1000 is full backward, 1500 is neutral, and 2000 is full forward. However, when it loops back only the forward speeds work. This could become problomatic if it wont behave the same every time
+
+- ***Debug try 2:*** Force neutral before restarting loop
+```cpp
+  #include <Servo.h>
+  Servo esc;
+
+  void setup() {
+    // put your setup code here, to run once:
+    Serial.begin(115200);
+    esc.attach(13);
+    esc.writeMicroseconds(1500);
+    delay(3000);
+  }
+  
+  void loop() {
+    // put your main code here, to run repeatedly:
+    int testTime = 3000;
+    Serial.println("began testing");
+     for (int i = 0; i < 11; i++){
+        esc.writeMicroseconds(1500);
+        delay(1000);
+       int testSpeed = 1000 + (100*i);
+       Serial.println(testSpeed);
+       delay(500);
+       esc.writeMicroseconds(testSpeed);
+       delay(testTime);
+     } 
+    }
+```
+- ***Findings:*** It works now across multiple tests
+- ***Video:*** 
+
+
