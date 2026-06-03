@@ -95,6 +95,6 @@ void loop() {
     }
 ```
 - ***Findings:*** It works now across multiple tests
-- ***Video:*** 
+- ***Video:*** [DC Motor Direction Using PWM Test](https://youtu.be/NdSpAJB8zBE)
 
 
