@@ -215,7 +215,55 @@ void DcMovement(Direction direction, double speedPercent, int time){
 - It had to be delayed for an entire second to work, which is an obvious flaw as I know how to account for the movement during that second.
 - I wonder if by making it neutral for a second if that would work, but I already did that in my initializeAtNeutral function
 - That also did not work.
-  - **Debug 2:*** send a pulse width of 1450 for a second before running, it should be so slow the gearbox will cancel any movement
+  - ***Debug 2:*** send a pulse width of 1450 for a second before running, it should be so slow the gearbox will cancel any movement
       - When doing this the first command still did not run, however the subsequent commands did register and run the small pulse widt. Therefore it must simply not be receving the first pulse width. I will add a serial command to see if this is true
       - Nope, its registering every time.
       - ***Solution?*** Until I can find a more permanent solution, I'll run a quick throw-away backwards command before any chain of backwards command.
+  ## Goal: Object oritentated coding
+  - To make the code easier to manage later on I have split the code into a .h, .cpp. and .ino file so i can make seperate classes for each component
+  - I am also going to attempt a more experimental way to fix this backwards problem in calling the function again within the function if the previous state was not backward and the current one is.
+    ```cpp
+    // Core calculation and motor driving logic
+    void EscController::DcMovement(Direction direction, double speedPercent, int time) {
+      double pulseWidth;
+      
+      // Converts the double to a decimal number
+      double speedPercentDec = speedVariance * (speedPercent / 100.0);
+      
+      // Handles the math for direction change
+      switch(direction) {
+        case Direction::Forward:
+          pulseWidth = neutralMicroseconds + speedPercentDec;
+          break;
+        case Direction::Backward:
+          pulseWidth = neutralMicroseconds - speedPercentDec;
+          break;
+        case Direction::Neutral:
+          pulseWidth = neutralMicroseconds;
+          break;
+      }
+      
+      Serial.print("Target Pulse Width: ");
+      Serial.println(pulseWidth);
+    
+    
+      
+      // Run the motor, if its backward send two pulse signals
+      initializeDcAtNeutral();
+      if (direction != Direction::Backward && direction == Backward) {
+        esc.writeMicroseconds(pulseWidth);
+        delay(restTime);
+        ESCController::DcMovement(direction, speedPercent, time);
+      } else {
+        esc.writeMicroseconds(pulseWidth);
+        delay(time);
+      }
+      
+    
+      // Save the current direction so we remember it on the NEXT call
+      previousDirection = direction;
+    }
+    ```
+  - ***Debug:*** I have swapped headers and classes and forgot to call the enum class in some places, it will be fixed
+  ## Solution: ESC calibration
+  - Turns out the problem was never my code, it was the ESC not being calibrated. I simply took off a jumper block and put it in cralwer mode and now it works exactly as intended. I can finally build the car
