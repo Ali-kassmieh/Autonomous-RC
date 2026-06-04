@@ -37,7 +37,7 @@
 - I got the funding and am awaiting my ESP 32, but for now ill use my arduino for basic code
 - I got the arduino to connect to the ESC and I got the motor running for a predetermined amount of time
 - Movements work via microseconds, and I have found that 1500 microseconds coresponds to neutral
-
+## Goal: Get motor running
   ### Issue: I cannot seem to get the motor to move backwards
 - **debug try 1** Try a bunch of values until it moves
  ```cpp
@@ -96,5 +96,99 @@ void loop() {
 ```
 - ***Findings:*** It works now across multiple tests
 - ***Video:*** [DC Motor Direction Using PWM Test](https://youtu.be/NdSpAJB8zBE)
+### Issue: Code isn't efficent
+- ***Solution*** Use a class enum and switch statement to get motor to run in a set direction and speed from one command
+```cpp
+#include <ESP32Servo.h>
+Servo esc;
 
+//These are the three directions allowed
+enum class Direction{
+  Forward,
+  Backward,
+  Neutral
+};
 
+//Speed constants
+int fullBackwardMicroseconds = 1000;
+int neutralMicroseconds = 1500;
+int fullForwardMicroseconds = 2000;
+int speedVariance = 500;
+int restTime = 2000;
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(115200);
+  esc.attach(13, 1000, 2000);
+  esc.writeMicroseconds(1500);
+  delay(3000);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  DcMovement(Direction::Forward, 50, 1000);
+  DcMovement(Direction::Forward, 100, 1000);
+  DcMovement(Direction::Neutral, 50, 1000);
+  DcMovement(Direction::Backward, 50, 1000);
+  DcMovement(Direction::Backward, 100, 1000);
+}
+
+void initializeDcAtNeutral(){
+  esc.writeMicroseconds(neutralMicroseconds);
+  delay(1000);
+}
+
+void DcMovement(Direction direction, double speedPercent, int time){
+  esc.writeMicroseconds(neutralMicroseconds);
+  delay(restTime);
+  
+  double pulseWidth;
+  //Converts the double to a decimal number
+  double speedPercentDec = speedVariance * (speedPercent/100);
+  //Handles the math for direction change
+  switch(direction){
+    case Direction::Forward:
+      pulseWidth = neutralMicroseconds + speedPercentDec;
+      break;
+    case Direction::Backward:
+      pulseWidth = neutralMicroseconds - speedPercentDec;
+      break;
+    case Direction::Neutral:
+      pulseWidth = neutralMicroseconds;
+      break;
+  }
+  Serial.println(pulseWidth);
+  //Run the motor
+  initializeDcAtNeutral();
+  esc.writeMicroseconds(pulseWidth);
+  delay(time);
+
+}
+```
+#### Issue: First 50% reverse is fine, after that it wont work but the other four values do
+- ***Debug: *** Maybe it is entering a break-then-reverse state as my research shows, so lets debug that
+  ```cpp
+  void loop() {
+  // put your main code here, to run repeatedly:
+  //  DcMovement(Direction::Forward, 50, 1000);
+  //  DcMovement(Direction::Forward, 100, 1000);
+  //  DcMovement(Direction::Neutral, 50, 1000);
+  //  DcMovement(Direction::Backward, 50, 1000);
+  //  DcMovement(Direction::Backward, 100, 1000);
+  esc.writeMicroseconds(1500);
+  delay(1000);
+  
+  esc.writeMicroseconds(1300);
+  delay(1000);
+  
+  esc.writeMicroseconds(1500);
+  delay(1000);
+  
+  esc.writeMicroseconds(1300);
+  delay(3000);
+  }
+  ```
+- Nope, works as intended. The issue must be from within the DcMovement class, but it's late and im free all day tomorrow to work on this
+
+##Goal:Get microcontroller to turn on with ESC
+- The simplest method to this is powering the ESP32 via the 5V with a buck convertor, I'll buy that now
