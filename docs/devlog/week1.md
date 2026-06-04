@@ -166,7 +166,7 @@ void DcMovement(Direction direction, double speedPercent, int time){
 }
 ```
 #### Issue: First 50% reverse is fine, after that it wont work but the other four values do
-- ***Debug: *** Maybe it is entering a break-then-reverse state as my research shows, so lets debug that
+- ***Debug:*** Maybe it is entering a break-then-reverse state as my research shows, so lets debug that
   ```cpp
   void loop() {
   // put your main code here, to run repeatedly:
@@ -190,5 +190,32 @@ void DcMovement(Direction direction, double speedPercent, int time){
   ```
 - Nope, works as intended. The issue must be from within the DcMovement class, but it's late and im free all day tomorrow to work on this
 
-##Goal:Get microcontroller to turn on with ESC
+## Goal:Get microcontroller to turn on with ESC
 - The simplest method to this is powering the ESP32 via the 5V with a buck convertor, I'll buy that now
+# June 4, 2026
+## Objectives
+- Fix motor movement
+- Install buck convertor
+- Install encoder
+## Goal: Fix motor movement
+- The issue was that the first time I ran backward the motor would not move but every time after that it would,
+- ***Debug:*** I'll modify my code to send a 1250 microsecond pulse for a hundreth of a second before running the real command
+- ```cpp
+    //Run the motor, if its backward send two pulse signals
+  initializeDcAtNeutral();
+  if(direction != Direction::Backward){
+    esc.writeMicroseconds(pulseWidth);
+  }else{
+    esc.writeMicroseconds(1250);
+    delay(10);
+    esc.writeMicroseconds(pulseWidth);
+  }
+  delay(time);
+  ```
+- It had to be delayed for an entire second to work, which is an obvious flaw as I know how to account for the movement during that second.
+- I wonder if by making it neutral for a second if that would work, but I already did that in my initializeAtNeutral function
+- That also did not work.
+  - **Debug 2:*** send a pulse width of 1450 for a second before running, it should be so slow the gearbox will cancel any movement
+      - When doing this the first command still did not run, however the subsequent commands did register and run the small pulse widt. Therefore it must simply not be receving the first pulse width. I will add a serial command to see if this is true
+      - Nope, its registering every time.
+      - ***Solution?*** Until I can find a more permanent solution, I'll run a quick throw-away backwards command before any chain of backwards command.
