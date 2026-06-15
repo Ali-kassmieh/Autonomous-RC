@@ -95,3 +95,30 @@
   - **Notes**: break statement can't be used so it was removed; video shows that <90 is right and >90 is left
       - [Turning test try 2](https://drive.google.com/file/d/1dSEC8vdrTq2DU7rf9UlD6RBa1D8ENo3t/view?usp=drive_link)
     
+### Try three
+  - Turn function has updated logic to make it more readable and understandable
+    ```cpp
+      //Servo turning logic
+      void ESC_CONTROLLER::Turning(Turn direction, int angle){
+        int turnAngle;
+        switch(direction){
+          case Turn::Right:
+            turnAngle = turnNeutral - angle;
+            break;
+          case Turn::Left:
+            turnAngle = turnNeutral + angle;
+            break;
+        }
+        turnServo.write(turnAngle);
+        Serial.print("Turn ");
+        Serial.print(direction);
+        Serial.print(" at ");
+        Serial.print(angle);
+        Serial.print(" degrees");
+      }
+    ```
+- Success
+  - [Updated turning](https://drive.google.com/file/d/1fbrsKT01M-7IIJK3n-BFmdFYB5H9_Tj1/view?usp=drive_link)
+  ## Log 2: Experiment with turning angle
+  ### Try 1
+    - **Notes**: I assume that the wheels and servo are not 1:1, that is to say turning the servo one degree will not turn the wheels one degree. The only thing to do is experiment
