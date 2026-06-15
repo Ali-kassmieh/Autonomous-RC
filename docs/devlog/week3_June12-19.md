@@ -3,7 +3,6 @@
 - Power on ESP via RC car
 - Move motor with ESP
 - Connect servo to ESP in order to turn the car
-- Start design on ESP32 mount
 ## Important note
   - After a week of attempting to desolder throughholes I have chosen to try again at a later date near a professional and buy a new ESP whose headers are not soldered as to not waste valuable time.
 ## Log 1: Power
@@ -37,3 +36,8 @@
   - Rebotted ESP
   - The code has uploaded and the motor runs, but the wheels won't move
       - (Wheel's wont run}[https://drive.google.com/file/d/1nYilarqoGKA7xZtTdCusuBla2_7aNoTo/view?usp=drive_link]
+### Try 5
+  - Opened differential cover, gears were not connected
+      - (Bad gear connection)[https://drive.google.com/file/d/1GKDmwgQOor4cDD_ReAj1IwnqIgu5BLTh/view?usp=drive_link]
+      - (Fixed gear connection)[https://drive.google.com/file/d/1POKuk53iQw5wsmc3ZTg9TavO7AL8pmbY/view?usp=drive_link]
+      - (Mostly successful run)[https://drive.google.com/file/d/1nrzQ8fd0h0CVtC9r4v0YI_7si10cXEF6/view?usp=drive_link]
