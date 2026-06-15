@@ -13,7 +13,7 @@
 ### Try 1:
   - Ran code from previous log file without altering it
   - Try failed, the serial port is not being read, maybe the board configuration was done incorrectly
-      - (Running motor try 1)[https://drive.google.com/file/d/1vUi3IwTjfsRy6KyLP9qBH4FcRZp4Uwap/view?usp=drive_link]
+      - [Running motor try 1](https://drive.google.com/file/d/1vUi3IwTjfsRy6KyLP9qBH4FcRZp4Uwap/view?usp=drive_link)
 ### Try 2:
   - Changed these settings:
     - | Setting          | Value                                |
@@ -30,14 +30,14 @@
 ### Try 3:
   - Settings from before unchanged, USB-C port changed
   - Try failed, I need to verify that the USB works
-      - (Running motor try 3)[
+      - [Running motor try 3](https://drive.google.com/file/d/1OnLAtSFd7pJiGgBTQFBYWPpZwHUfpsNA/view?usp=drive_link)
   - By plugging my phone into my PC, I verify that this is a transfering USB cable
 ### try 4:
   - Rebotted ESP
   - The code has uploaded and the motor runs, but the wheels won't move
-      - (Wheel's wont run}[https://drive.google.com/file/d/1nYilarqoGKA7xZtTdCusuBla2_7aNoTo/view?usp=drive_link]
+      - [Wheel's wont run](https://drive.google.com/file/d/1nYilarqoGKA7xZtTdCusuBla2_7aNoTo/view?usp=drive_link)
 ### Try 5
   - Opened differential cover, gears were not connected
-      - (Bad gear connection)[https://drive.google.com/file/d/1GKDmwgQOor4cDD_ReAj1IwnqIgu5BLTh/view?usp=drive_link]
-      - (Fixed gear connection)[https://drive.google.com/file/d/1POKuk53iQw5wsmc3ZTg9TavO7AL8pmbY/view?usp=drive_link]
-      - (Mostly successful run)[https://drive.google.com/file/d/1nrzQ8fd0h0CVtC9r4v0YI_7si10cXEF6/view?usp=drive_link]
+      - [Bad gear connection](https://drive.google.com/file/d/1GKDmwgQOor4cDD_ReAj1IwnqIgu5BLTh/view?usp=drive_link)
+      - [Fixed gear connection](https://drive.google.com/file/d/1POKuk53iQw5wsmc3ZTg9TavO7AL8pmbY/view?usp=drive_link)
+      - [Mostly successful run](https://drive.google.com/file/d/1nrzQ8fd0h0CVtC9r4v0YI_7si10cXEF6/view?usp=drive_link)
