@@ -140,7 +140,6 @@
 | **70°** | **31.2°** | +2.4° |
 | **80°** | **32.5°** | +1.3° |
 | **90°** | **33.0°** | +0.5° |
-| :---: | :---: | :---: |
   ### Issue 1
 - I need to actually drive the thing, however my axle from before has fallen off and I need to fix it
 # June 16, 2026
