@@ -140,5 +140,20 @@
 | **70°** | **31.2°** | +2.4° |
 | **80°** | **32.5°** | +1.3° |
 | **90°** | **33.0°** | +0.5° |
+| :---: | :---: | :---: |
   ### Issue 1
-    - I need to actually drive the thing, however my axle from before has fallen off and I need to fix it
+- I need to actually drive the thing, however my axle from before has fallen off and I need to fix it
+# June 16, 2026
+## Goals:
+- Understand PID controls since they are used for most controllers in industrial applications
+## Notes on PID control
+- In an open loop system, the robot is told to do one thing (ie move forward one meter)
+    - However, it cannot adjust itself based on unknowns, such as dirt in the wheels or a faster than usual robot
+- PID (Proportional integral derivitive) on the other hand is a closed loop system, it feeds the output back into the input and measures the error between the starting state and goal state
+- The goal is to convert this error into commands in a way where the error eventually reaches 0/goal is reached
+- With the acronym, the output is the sum of the error term times a constant kp, the error multiplied my a constant Ki then integrated, and the derivitive of constant Kd and the error 
+  - These k-terms are called gains and they refer to how strongly the system should react to different forms of errors
+      - **Kp * e(t)**: This is the proportional term. It reacts to the current error. For example, if the car is 10° off its desired heading, the controller applies a steering correction proportional to that 10° error.
+      - **Ki * ∫e(t)dt**: This is the integral term. It reacts to accumulated error over time. P only reacts to the current issue. However there may be a constant underlying issue that is causing a persistant error. In that case, I will keep note of this constant error and add extra correction until the error is resolved
+      - **Kd * de/dt** This is the derivative term. It monitors how quickly the error is changing. If the error is being resolved very quickly, it reduces the correction to avoid overshooting the target. If the error is increasing quickly, it increases the correction to counteract the worsening error. It essentially acts as a shock absorber for the controller.
+  - To summarize, P changes the current error, I adjusts for persistant error, and D makes sure we don't bounce back and force around the target
