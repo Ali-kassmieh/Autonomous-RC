@@ -121,4 +121,24 @@
   - [Updated turning](https://drive.google.com/file/d/1fbrsKT01M-7IIJK3n-BFmdFYB5H9_Tj1/view?usp=drive_link)
   ## Log 2: Experiment with turning angle
   ### Try 1
-    - **Notes**: I assume that the wheels and servo are not 1:1, that is to say turning the servo one degree will not turn the wheels one degree. The only thing to do is experiment
+  - The first thing is just to find the maximum turn angle for the left and the right.
+    -What this means is the point where going up any more will not move the wheels anymore
+        - [Left try 1]()
+        - [Right try 1]()
+  - I then sent the video to Gemini AI and it made a chart of each angle.
+#### Right max angle test
+
+| Servo Input Angle | Measured Wheel Angle | Step Delta |
+| :---: | :---: | :---: |
+| **0°** | **0.0°** | — |
+| **10°** | **4.5°** | +4.5° |
+| **20°** | **10.2°** | +5.7° |
+| **30°** | **16.0°** | +5.8° |
+| **40°** | **21.1°** | +5.1° |
+| **50°** | **25.3°** | +4.2° |
+| **60°** | **28.8°** | +3.5° |
+| **70°** | **31.2°** | +2.4° |
+| **80°** | **32.5°** | +1.3° |
+| **90°** | **33.0°** | +0.5° |
+  ### Issue 1
+    - I need to actually drive the thing, however my axle from before has fallen off and I need to fix it
