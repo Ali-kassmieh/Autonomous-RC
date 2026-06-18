@@ -92,7 +92,7 @@
       - [Turning test try 1](https://drive.google.com/file/d/1FKzO4u9u99CTPYs-Lia31mYaci5TXr5X/view?usp=drive_link)
 ### Try two
   - Code has been updated with the previous notes
-  - **Notes**: break statement can't be used so it was removed; video shows that <90 is right and >90 is left
+  - **Notes**: break statement can't be used so it was removed; video shows that >90 is right and <90 is left
       - [Turning test try 2](https://drive.google.com/file/d/1dSEC8vdrTq2DU7rf9UlD6RBa1D8ENo3t/view?usp=drive_link)
     
 ### Try three
@@ -121,27 +121,37 @@
   - [Updated turning](https://drive.google.com/file/d/1fbrsKT01M-7IIJK3n-BFmdFYB5H9_Tj1/view?usp=drive_link)
   ## Log 2: Experiment with turning angle
   ### Try 1
-  - The first thing is just to find the maximum turn angle for the left and the right.
-    -What this means is the point where going up any more will not move the wheels anymore
-        - [Left try 1]()
-        - [Right try 1]()
+  - For the saftey of the rover I will cut off steering angle at 30 degrees in both direction
+  - I will move the rovers wheels by 5 degrees each time
   - I then sent the video to Gemini AI and it made a chart of each angle.
-#### Right max angle test
+ 
+#### right max angle test
 
 | Servo Input Angle | Measured Wheel Angle | Step Delta |
 | :---: | :---: | :---: |
 | **0°** | **0.0°** | — |
-| **10°** | **4.5°** | +4.5° |
-| **20°** | **10.2°** | +5.7° |
-| **30°** | **16.0°** | +5.8° |
-| **40°** | **21.1°** | +5.1° |
-| **50°** | **25.3°** | +4.2° |
-| **60°** | **28.8°** | +3.5° |
-| **70°** | **31.2°** | +2.4° |
-| **80°** | **32.5°** | +1.3° |
-| **90°** | **33.0°** | +0.5° |
+| **5°** | **2.2°** | +2.2° |
+| **10°** | **4.6°** | +2.4° |
+| **15°** | **7.3°** | +2.7° |
+| **20°** | **10.1°** | +2.8° |
+| **25°** | **12.8°** | +2.7° |
+| **30°** | **15.4°** | +2.6° |
+
+#### left max angle test
+
+| Servo Input Angle | Measured Wheel Angle | Step Delta |
+| :---: | :---: | :---: |
+| **0°** | **0.0°** | — |
+| **5°** | **2.4°** | +2.4° |
+| **10°** | **4.9°** | +2.5° |
+| **15°** | **7.7°** | +2.8° |
+| **20°** | **10.6°** | +2.9° |
+| **25°** | **13.3°** | +2.7° |
+| **30°** | **16.1°** | +2.8° |
+
   ### Issue 1
 - I need to actually drive the thing, however my axle from before has fallen off and I need to fix it
+- I bought a few o-rings and used them to cover the gap
 # June 16, 2026
 ## Goals:
 - Understand PID controls since they are used for most controllers in industrial applications
@@ -156,3 +166,6 @@
       - **Ki * ∫e(t)dt**: This is the integral term. It reacts to accumulated error over time. P only reacts to the current issue. However there may be a constant underlying issue that is causing a persistant error. In that case, I will keep note of this constant error and add extra correction until the error is resolved
       - **Kd * de/dt** This is the derivative term. It monitors how quickly the error is changing. If the error is being resolved very quickly, it reduces the correction to avoid overshooting the target. If the error is increasing quickly, it increases the correction to counteract the worsening error. It essentially acts as a shock absorber for the controller.
   - To summarize, P changes the current error, I adjusts for persistant error, and D makes sure we don't bounce back and force around the target
+## How to implement this into my code
+- I think what I will do is make a PI system for the servo and a D system for the motor. It will turn to its designated header angle and check for any reoccuring errors while turning, however the motor will use a d function of dt to slow down as the error becomes smaller
+- The header will be the yaw of the robot and the calculates simple, just P = pi * error; I += ki * error * dt; D = (ki * (error-lastError)/dt)*motorSpeed
