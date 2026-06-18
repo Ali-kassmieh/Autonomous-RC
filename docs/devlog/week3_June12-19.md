@@ -149,6 +149,27 @@
 | **25°** | **13.3°** | +2.7° |
 | **30°** | **16.1°** | +2.8° |
 
+-Taking the Average Rate of Change of each we get this univeral equation
+
+### Universal Steering Conversion Equation
+
+* **For Right Turns** ($\theta_s \ge 0$):  
+  $$\theta_w = 0.513 \cdot \theta_s$$
+
+* **For Left Turns** ($\theta_s < 0$):  
+  $$\theta_w = 0.537 \cdot \theta_s$$
+
+---
+
+### Variable Definitions
+
+* **$\theta_w$ (Wheel Angle):** The actual geometric steering angle of the physical wheels relative to the straight-ahead centerline ($0^\circ$). A positive result indicates a right-hand turn, while a negative result indicates a left-hand turn.
+* **$\theta_s$ (Servo Input Angle):** The commanded rotation angle sent to the servo motor relative to its center position ($0^\circ$). Positive inputs ($>0^\circ$) drive the car to the right, and negative inputs ($<0^\circ$) drive it to the left.
+
+### Variable Definitions
+
+* **$\theta_w$ (Wheel Angle):** The actual geometric steering angle of the physical wheels relative to the straight-ahead centerline ($0^\circ$). A positive result indicates a right-hand turn, while a negative result indicates a left-hand turn.
+* **$\theta_s$ (Servo Input Angle):** The commanded rotation angle sent to the servo motor relative to its center position ($0^\circ$). In this system, positive inputs ($>0^\circ$) drive the steering linkage to the right, and negative inputs ($<0^\circ$) drive it to the left.
   ### Issue 1
 - I need to actually drive the thing, however my axle from before has fallen off and I need to fix it
 - I bought a few o-rings and used them to cover the gap
