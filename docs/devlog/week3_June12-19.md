@@ -190,3 +190,22 @@
 ## How to implement this into my code
 - I think what I will do is make a PI system for the servo and a D system for the motor. It will turn to its designated header angle and check for any reoccuring errors while turning, however the motor will use a d function of dt to slow down as the error becomes smaller
 - The header will be the yaw of the robot and the calculates simple, just P = pi * error; I += ki * error * dt; D = (ki * (error-lastError)/dt)*motorSpeed
+# June 18, 2026
+## Goals
+- Install encoder onto rover
+- Test PID system from yesterday
+## Log 1: Encoder installation
+### Notes
+- I am using the AS5600 magnetic encoder. It requires both the sensing chip and magnet to be at most 3mm apart with 1.0mm being reccomended
+- The issue is I cannot install the sensor inside the drivetrain as the PCB is too big and there are too many metalic parts in one small area, potentially causing the magnet to slip off.
+- I can put it under the dogbone, however that would result in a 10mm space
+- I can't glue it on top of the chip as direct magnetic contact can ruin the reading
+- The best thing is to 3D model a mount to be put ontop the PCB with a slot in the middle for the magnet. It will be shaped like an I to make room for the header pins
+  - **Important measurment**
+  - 20mm from hole to hole
+  - Mounting hole is 3.6mm
+  - Chip is 1.7mm
+  - Magnet is 3mm in diameter
+### Design 1:
+- This is a basic I design with a holder in the middle for the magnet
+    - [AS5600 mount try 1]9https://drive.google.com/file/d/1nssDZpm3eW2xAHSCkljeuwxwtecOYRUB/view?usp=drive_link)
