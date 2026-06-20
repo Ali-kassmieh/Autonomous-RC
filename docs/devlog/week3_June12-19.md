@@ -209,3 +209,4 @@
 ### Design 1:
 - This is a basic I design with a holder in the middle for the magnet
     - [AS5600 mount try 1](https://drive.google.com/file/d/1nssDZpm3eW2xAHSCkljeuwxwtecOYRUB/view?usp=drive_link)
+- This will not work, the PCB will spin with the wheel meaning so will the wires
