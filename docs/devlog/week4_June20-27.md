@@ -11,3 +11,4 @@
       - The IMU will be placed near the front of the base in order to line up with the rovers center of gravity
       - The encoder will be seperate
       - The power distubutor will be added on the bottom of the base because it is quite large (nearly 12cm) and would make the area cramp. This also allows for the encoder to receive power more easily
+      - 
