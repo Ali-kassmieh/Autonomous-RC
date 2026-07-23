@@ -216,4 +216,212 @@ if (movementDirection == Direction::Forward){
 ```
 - Now I need to return these values. The issue is that I have two value of different types. How can i return two values?
 - My research has shown that I can use **Dot operators** in order to attach multiple values to one variable. In action this looks like this.
-- To do this I need to do struct, which is like grouping similar variables into one variable
+- To do this I need to do struct, which is like grouping similar variables into one object
+- The two variables I want to use are steeringCorrection and speedControl. I will add this to my return
+## Log 3: Final prototype
+-After fixes some small mistakes (semi collons missing, deleting any D variables, fixing while loop, etc) This is the final code
+### Enums.h
+```cpp
+#ifndef ENUM_H
+#define ENUM_H
+enum class Direction {
+  Forward,
+  Backward,
+  Neutral
+};
+enum class Turn {
+  Right,
+  Left
+};
+#endif
+```
+### PIDCalculations.h
+```cpp
+#ifndef PID_CALCULATIONS_H
+#define PID_CALCULATIONS_H
+
+#include "enums.h"
+#include <Math.h>
+#include <Wire.h>
+
+#include "SparkFun_BNO08x_Arduino_Library.h"
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SDA_PIN 8
+#define SCL_PIN 9
+
+struct PIDOutput{
+  float steeringCorrection;
+  float speedControl;
+};
+
+class PID_CALCULATIONS{
+  private:
+    //IMU
+    BNO08x bno08x;
+    
+    //K goals
+    float Kp = 1.0;
+    float Ki = 0.0;
+    float Kd = 0.0;
+
+    //Variables which need to be constantly recorded
+    float integral = 0.0;
+    unsigned long previousTime = 0.0 ;
+    float lastError = 0.0;
+
+    //Driving variables
+    int neautralMicroseconds = 1500;
+
+  public:
+    //BNO08x
+    void initBNO08x();
+    // Yaw
+    void setReports();
+    float calculateYaw();
+    // PID
+    PIDOutput PIDSystem(float targetHeader, Turn turningDirection, Direction movementDirection);
+};
+
+#endif
+```
+### PIDCalculations.cpp
+```cpp
+#include "PIDCalculations.h"
+
+
+  
+void PID_CALCULATIONS::initBNO08x(){
+  delay(10);
+  
+  Wire.begin(SDA_PIN, SCL_PIN);
+
+  if(bno08x.begin(BNO08x_DEFAULT_ADDRESS, Wire) == false){
+    Serial.println("BNO08x failed to initialize");
+    while(1);
+  }
+  Serial.println("BNO08x found!");
+}
+
+
+//Here is where you define the sensor output you want to reveive
+//FUNCTION COPIED FROM SparkFun_BNO09x_Arduino_Library
+void PID_CALCULATIONS::setReports() {
+  Serial.println("Setting desired reports");
+  if (bno08x.enableRotationVector() == true) {
+    Serial.println(F("Rotation vector enabled"));
+    Serial.println(F("Output in form roll, pitch, yaw"));
+  } else {
+    Serial.println("Could not enable rotation vector");
+  }
+}
+
+
+float PID_CALCULATIONS::calculateYaw(){
+  if (bno08x.wasReset()) {
+    Serial.print("sensor was reset ");
+  }
+  //Is something happening
+  if(bno08x.getSensorEvent() == true){
+    //Is it what we want
+    if(bno08x.getSensorEventID() == SENSOR_REPORTID_ROTATION_VECTOR){
+      float yaw = (bno08x.getYaw()) * 180.0f/PI;// Convert yaw to degree
+      Serial.printf("Yaw: %.2f\n", yaw);
+      return yaw;
+    }
+  }
+  return NAN;
+}
+
+/* PID skeleton
+ * error = target - current;
+ * P = Kp * error;
+ * integral = error * dt //global vaiable
+ * I += Ki * integral;
+ * D = Kd * (error - lastError) / dt;
+ * output = P + I + D;
+ */
+
+
+PIDOutput PID_CALCULATIONS::PIDSystem(float targetHeading, Turn turningDirection, Direction movementDirection){
+
+  //header and time calculations
+  float startingHeading = calculateYaw();
+  float currentHeading;
+  unsigned long currentTime;
+
+  float error;
+  float steeringCorrection;
+  
+  //k goal calculations
+  float Kprop = 0;
+  float Kint = 0;
+
+  //Drive calculations
+  float drivingAdjustment;
+  float goalMicroseconds;
+
+  if(turningDirection == Turn::Right){
+    targetHeading = startingHeading + targetHeading;
+  }
+  else if(turningDirection == Turn::Left){
+    targetHeading = startingHeading - targetHeading;
+  }
+
+  do{
+
+    previousTime = currentTime;
+    currentTime = millis();
+    float deltaTime = previousTime - currentTime;
+
+    currentHeading = calculateYaw();
+    error = targetHeading - currentHeading;
+
+    //Wrap around
+    while(error > 180) error -= 360;
+    while(error < -180) error += 360;
+
+
+    //Calculates how much the servo needs to shift by in order to acheive needed turn
+    Kprop = Kp * error;
+
+    //Integral accumulates error over time to remove steady-state error
+    integral += error * deltaTime;
+    Kint = Ki * integral;
+
+    steeringCorrection = Kprop + Kint;
+
+
+
+    //Slows down the motor as it reaches target header
+    /*
+     * This is a bit of a complicated thought process so let me walk you through it.
+     * The most I need the speed to vary by is 500 (1500 is stop, 1000 is full reverse, 2000 is full forward)
+     * Because of this, I need a difference of 180 to lead to a speed variance of 500 and -180 to -500 to lead to +/- 180
+     * The +/- part will be decided by whether I want to go forward or backwards
+     * Therefore I need a variable to multiply this by to change the speed, lets call it driveAdjustment
+     * driveAdjustment * 180 = 500, therefore driveAdjustment = 500/180
+     * If I want to go in reverse this number is negative
+     */
+
+    if(movementDirection == Direction::Forward){
+      drivingAdjustment = 500.0 / 180.0;
+    }
+    else if(movementDirection == Direction::Backward){
+      drivingAdjustment = -500.0 / 180.0;
+    }
+    goalMicroseconds = neautralMicroseconds + (drivingAdjustment * abs(error));
+
+  }while(abs(error) > 3);
+
+  //The results of our PID system
+  PIDOutput output;
+
+  output.steeringCorrection = steeringCorrection;
+  output.speedControl = goalMicroseconds;
+
+  return output;
+}
+
+```
