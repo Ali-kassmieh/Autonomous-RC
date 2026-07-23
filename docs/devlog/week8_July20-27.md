@@ -84,3 +84,136 @@ void ESC_CONTROLLER::initialize(int ESCPin, int turnServoPin, int SDA, int SCL){
 - The issue is it uses A4 and such pins, which is an arduino thing. I do not know if this translates well to ESP32.
 ### Solution arose
 - After so long, maybe an hour or two, I finally got the code to register the existance of the bno08x. My mistake was sending the SDA and SCL pin to the bno08x.begin() command. You are meant to send it to the Wire.begin command, where you then define bno08x.begin(BNO08x_DEFAULT_ADDRESS, Wire).
+## Log 3: Calculating yaw
+- This was quite simple, as the library I am using (sparkfun bno08x library) has multiple example programs, so I just used that to create two functions
+ ```cpp
+//Here is where you define the sensor output you want to reveive
+//FUNCTION COPIED FROM SparkFun_BNO09x_Arduino_Library
+void PID_CALCULATIONS::setReports() {
+  Serial.println("Setting desired reports");
+  if (bno08x.enableRotationVector() == true) {
+    Serial.println(F("Rotation vector enabled"));
+    Serial.println(F("Output in form roll, pitch, yaw"));
+  } else {
+    Serial.println("Could not enable rotation vector");
+  }
+}
+ ```
+```cpp
+float PID_CALCULATIONS::calculateYaw(){
+  if (bno08x.wasReset()) {
+    Serial.print("sensor was reset ");
+  }
+  //Is something happening
+  if(bno08x.getSensorEvent() == true){
+    //Is it what we want
+    if(bno08x.getSensorEventID() == SENSOR_REPORTID_ROTATION_VECTOR){
+      float yaw = (bno08x.getYaw()) * 180.0f/PI;// Convert yaw to degree
+      Serial.printf("Yaw: %.2f\n", yaw);
+      return yaw;
+    }
+  }
+  return NAN;
+}
+```
+- For once it works pretty easily.
+# July 22
+## Goals
+- Make a protottype PID controll
+## Log 1: Prototyping
+- I'm printing a new control base alongside new support beams
+- While I am waiting I might as well make a PID system to test out once it is wired up
+### Thing to tackle 1: how to calculate angle
+- The header will read from -180 to 180, so I need to adjust the target angle based on its current position. The simplest thing is to make an enum class for the directions right and left then add the target angle if I am moving right and subtract it if I am moving left. Then I will add a do-while statement afterwords so that the target angle does not change
+```cpp
+if(Direction == Turn::Right){
+    targetHeader = PID_CALCULATIONS::calculateYaw() + targetHeader;
+  }else if (Direction == Turn::Left){
+    targetHeader = PID_CALCULATIONS::calculateYaw() - targetHeader;
+  }
+do{
+
+}while(error < 3)
+```
+- Now I will add a PI system. I have chosen to delete D as it is not needed unless there is overshoot or oscilation. The items that are commented out are what is needed in order to add D later on.
+```cpp
+ //header and time calculations
+  float startingHeader = PID_CALCULATIONS::calculateYaw();
+  //float currentTime;
+  float currentHeader;
+
+  //k goal calculations
+  float Kprop, Kint, Kdif = 0;
+  float turnError;
+
+  //Drive calculations
+  float driveAdjustment;
+  float goalMicroseconds;
+  
+  if(turningDirection == Turn::Right){
+    targetHeader = startingHeader + targetHeader;
+  }else if (turningDirection == Turn::Left){
+    targetHeader = startingHeader - targetHeader;
+  }
+
+  do{
+//    previous time = currentTime;
+//    currentTime = millis();
+//    float deltaTime = previousTime - currentTime;
+    
+
+    currentHeader = PID_CALCULATIONS::calculateYaw();
+    error = targetHeader - currentHeader;
+    
+    //Wrap around
+    while(error > 180) error -= 360;
+    while(error < -180) error += 360;
+
+    //Calculates how much the servo needs to shift by in order to acheive needed turn
+    Kprop = kp * error;
+    integral += error * dt;
+    Kint = ki * integral
+    turnError = Kprop + Kint;
+    
+```
+- I also want to make it so as the error gets closer to 0, the car slows down. This section of commented code should explain my thought process well
+```cpp
+    /*
+   * This is a bit of a complicated thought process so let me walk you through it.
+   * The most I need the speed to vary by is 500 (1500 is stop, 1000 is full reverse 1500 is full forward)
+   * Because of this, I need a difference of 180 to lead to a speed variance of 500 and -180 to -500to lead to +/- 180
+   * The +/- part will be decided by whether I want to go forward or backwards
+   * Therefore I need a variable to multiply this by to change the speed, lets call it driveAdjustment
+   * driveAdjustment * 180 = 500, therefore driveAdjustment = 500/180
+   * If i want to go in reverse this number is negetive
+   */
+```
+- Implementing this idea we get an issue, the enum for drive is in the ESC files, I need the PID files to also acess them
+- **Solution** Make a new class for things both files need to access.
+- This file will be enums.h.
+```cpp
+#ifndef ENUM_H
+#define ENUM_H
+enum class Direction {
+  Forward,
+  Backward,
+  Neutral
+};
+enum class Turn {
+  Right,
+  Left
+};
+#endif
+```
+-Now we can implement my idea
+```cpp
+if (movementDirection == Direction::Forward){
+      drivingAdjustment = 500.0/180.0;
+    }else if (movementDirection == Direction::Reverse){
+      drivingAdjustment = -500.0/180.0;
+    }
+    goalMicroseconds = neautralMicroseconds + (drivingAdjustment * abs(error));
+```
+- Now I need to return these values. The issue is that I have two value of different types. How can i return two values?
+- My research has shown that I can use **Dot operators** in order to attach multiple values to one variable. In action this looks like this.
+- To do this I need to do struct, which is like grouping similar variables into one variable
