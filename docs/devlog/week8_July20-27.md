@@ -425,3 +425,29 @@ PIDOutput PID_CALCULATIONS::PIDSystem(float targetHeading, Turn turningDirection
 }
 
 ```
+# July 23, 2026
+## Goals
+- Finish printing new power base
+- Create improved base stands
+- Wire up car
+## Log 1: New base
+- Now that I have a final product, I will walk through the first three iterations
+### Iteration 1
+- This iteration has a few flaws, the mounts for each electronic is not the right size and there are no trenches for the soldered pins to go into
+- [Design 1](https://drive.google.com/drive/folders/1dt7QzPdBV1O8T7NkzWnFHfQqQZx-trvL?usp=drive_link)
+### Iteration 2
+- This iteration fixes the issues of the first and would work as a base for my electronics, but it is ineffeicent. There is a lot of wasted space.
+- [Design 2](https://drive.google.com/drive/folders/12wDUeO4QkyUliJY3y_FEt3RcoDbyPqOR?usp=drive_link)
+### Iteration 3
+- This will be the final product, I have removed a lot of unneeded plastic which does two very important things: it saves on plastic and I can print it in one piece
+- [Final design](https://drive.google.com/drive/folders/1SjAeHhAOPUheJ63TsBto86ksDxHwo5R8?usp=drive_link)
+## Log 2: Base holders
+- Now that I have a base, I need a way to hold it above the RC car so it does not fit the servo.
+- Luckily this only had two designs
+### Design 1
+- For this design I planned to replace the mounting brackets for the RC car's body, however I will be the first to say that it sucks. By sliding over an existing screw, it becomes too wide to slide a pin in. It also has too many weak points since it is hollow.
+- For my next design I will keep the part which attaches to the electronics base the same, however I am going to add a threaded screw to attach to the RC car itself for a stronger hold
+- [Design one](https://drive.google.com/file/d/1O8Iumoc8ymEDaNzHmxilMSTGcEkbcfHc/view?usp=drive_link)
+### Design 2
+- I added the modification mentioned in the previous design log, however the screw is terrible. The main issue is that the screw is too thin, so I will 3D print just the screw part but make it 3mm in diameter rather than 2
+- This has shown me another issue, the overly long screw breaks easily within the screw hole, forcing me to melt it with a soldering iron and pluck it out. However, 3mm did work. For my new design I will shorten the screw's length.
